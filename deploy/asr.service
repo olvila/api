@@ -1,0 +1,15 @@
+[Unit]
+Description=ASR Voice-to-Text Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/asr-service
+EnvironmentFile=/opt/asr-service/asr.env
+ExecStart=/opt/asr-service/venv/bin/python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8008
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
