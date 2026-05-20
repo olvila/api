@@ -1,0 +1,187 @@
+{
+  "test_time": "2026-05-20 05:43:52 UTC",
+  "service": "http://localhost:8008",
+  "total": 16,
+  "passed": 15,
+  "failed": 1,
+  "pass_rate": "93.8%",
+  "total_duration_sec": 7.3,
+  "results": [
+    {
+      "id": "FUNC-01",
+      "name": "健康检查",
+      "category": "功能",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "",
+      "body_text_preview": "",
+      "duration_ms": 14.16
+    },
+    {
+      "id": "FUNC-02",
+      "name": "上传 WAV 文件转写",
+      "category": "功能",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 1184.1
+    },
+    {
+      "id": "FUNC-03",
+      "name": "缺少参数时返回错误",
+      "category": "功能",
+      "verdict": "PASS",
+      "status_code": 400,
+      "expected_status": 400,
+      "body_summary": "error",
+      "body_text_preview": "",
+      "duration_ms": 4.4
+    },
+    {
+      "id": "FUNC-04",
+      "name": "API 文档可访问",
+      "category": "功能",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "",
+      "body_text_preview": "",
+      "duration_ms": 3.91
+    },
+    {
+      "id": "FMT-01",
+      "name": "WAV 格式 (RIFF)",
+      "category": "格式-原生",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 137.9
+    },
+    {
+      "id": "FMT-02",
+      "name": "FLAC 格式 (fLaC)",
+      "category": "格式-原生",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test",
+      "duration_ms": 122.67
+    },
+    {
+      "id": "FMT-03",
+      "name": "OPUS 格式 (OggS)",
+      "category": "格式-原生",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 146.07
+    },
+    {
+      "id": "FMT-04",
+      "name": "MP3 自动转码 (ID3)",
+      "category": "格式-转码",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 194.01
+    },
+    {
+      "id": "FMT-05",
+      "name": "M4A 自动转码 (ftyp)",
+      "category": "格式-转码",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 217.18
+    },
+    {
+      "id": "FMT-06",
+      "name": "OGG 自动转码",
+      "category": "格式-转码",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "you",
+      "duration_ms": 96.96
+    },
+    {
+      "id": "URL-01",
+      "name": "通过公网 URL 转写",
+      "category": "URL模式",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 283.92
+    },
+    {
+      "id": "BOUND-01",
+      "name": "空文件上传",
+      "category": "边界",
+      "verdict": "PASS",
+      "status_code": 400,
+      "expected_status": 400,
+      "body_summary": "error",
+      "body_text_preview": "",
+      "duration_ms": 4.71
+    },
+    {
+      "id": "BOUND-02",
+      "name": "超大文件校验 (31MB)",
+      "category": "边界",
+      "verdict": "PASS",
+      "status_code": 413,
+      "expected_status": 413,
+      "body_summary": "error",
+      "body_text_preview": "",
+      "duration_ms": 121.69
+    },
+    {
+      "id": "ERROR-01",
+      "name": "非音频文件上传",
+      "category": "异常",
+      "verdict": "PASS",
+      "status_code": 500,
+      "expected_status": 500,
+      "body_summary": "error",
+      "body_text_preview": "",
+      "duration_ms": 60.6
+    },
+    {
+      "id": "ERROR-02",
+      "name": "不存在的路径",
+      "category": "异常",
+      "verdict": "PASS",
+      "status_code": 404,
+      "expected_status": 404,
+      "body_summary": "",
+      "body_text_preview": "Not Found",
+      "duration_ms": 2.31
+    },
+    {
+      "id": "RATE-01",
+      "name": "高频请求限流 (>30次/分钟)",
+      "category": "限流",
+      "verdict": "WARN",
+      "status_code": "ok=35/err=0/35",
+      "expected_status": "限流生效 (≤30次成功)",
+      "body_summary": "no-limit",
+      "body_text_preview": "成功35次, 失败0次",
+      "duration_ms": 4580.91
+    }
+  ]
+}
