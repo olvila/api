@@ -44,16 +44,21 @@ def _transcode_to_wav(data: bytes) -> bytes:
 
     dst_path = src_path.parent / f"{src_path.name}.wav"
     try:
-        subprocess.run(
-            [
-                "ffmpeg", "-y", "-i", str(src_path),
-                "-ar", "16000", "-ac", "1", "-sample_fmt", "s16",
-                str(dst_path),
-            ],
-            capture_output=True,
-            check=True,
-            timeout=30,  # ffmpeg 转码超时
-        )
+        try:
+            subprocess.run(
+                [
+                    "ffmpeg", "-y", "-i", str(src_path),
+                    "-ar", "16000", "-ac", "1", "-sample_fmt", "s16",
+                    str(dst_path),
+                ],
+                capture_output=True,
+                check=True,
+                timeout=30,
+            )
+        except subprocess.CalledProcessError:
+            raise ValueError("不支持的音频格式，无法转码")
+        except subprocess.TimeoutExpired:
+            raise ValueError("音频转码超时")
         return dst_path.read_bytes()
     finally:
         src_path.unlink(missing_ok=True)

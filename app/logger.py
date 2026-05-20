@@ -72,12 +72,14 @@ def log_request(
     text: str = "",
     duration_ms: float = 0,
     error: str = "",
+    result: str = "",
 ) -> None:
     entry = {
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
         "filename": filename,
         "file_size_bytes": file_size_bytes,
         "status": status,
+        "result": result or status,
         "text_preview": text[:200],
         "duration_ms": round(duration_ms, 2),
     }

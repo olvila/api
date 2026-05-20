@@ -1,11 +1,11 @@
 {
-  "test_time": "2026-05-20 05:43:52 UTC",
+  "test_time": "2026-05-20 08:32:31 UTC",
   "service": "http://localhost:8008",
-  "total": 16,
-  "passed": 15,
+  "total": 20,
+  "passed": 19,
   "failed": 1,
-  "pass_rate": "93.8%",
-  "total_duration_sec": 7.3,
+  "pass_rate": "95.0%",
+  "total_duration_sec": 10.1,
   "results": [
     {
       "id": "FUNC-01",
@@ -16,7 +16,7 @@
       "expected_status": 200,
       "body_summary": "",
       "body_text_preview": "",
-      "duration_ms": 14.16
+      "duration_ms": 16.78
     },
     {
       "id": "FUNC-02",
@@ -27,7 +27,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 1184.1
+      "duration_ms": 1162.35
     },
     {
       "id": "FUNC-03",
@@ -38,7 +38,7 @@
       "expected_status": 400,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 4.4
+      "duration_ms": 4.92
     },
     {
       "id": "FUNC-04",
@@ -49,7 +49,7 @@
       "expected_status": 200,
       "body_summary": "",
       "body_text_preview": "",
-      "duration_ms": 3.91
+      "duration_ms": 4.15
     },
     {
       "id": "FMT-01",
@@ -60,7 +60,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 137.9
+      "duration_ms": 383.2
     },
     {
       "id": "FMT-02",
@@ -71,7 +71,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test",
-      "duration_ms": 122.67
+      "duration_ms": 227.02
     },
     {
       "id": "FMT-03",
@@ -82,7 +82,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 146.07
+      "duration_ms": 220.69
     },
     {
       "id": "FMT-04",
@@ -93,7 +93,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 194.01
+      "duration_ms": 213.14
     },
     {
       "id": "FMT-05",
@@ -104,7 +104,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 217.18
+      "duration_ms": 626.34
     },
     {
       "id": "FMT-06",
@@ -115,7 +115,51 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "you",
-      "duration_ms": 96.96
+      "duration_ms": 190.56
+    },
+    {
+      "id": "FMT-07",
+      "name": "AAC 自动转码",
+      "category": "格式-转码",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 254.78
+    },
+    {
+      "id": "FMT-08",
+      "name": "AC3 自动转码",
+      "category": "格式-转码",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 168.57
+    },
+    {
+      "id": "FMT-09",
+      "name": "WMA 自动转码",
+      "category": "格式-转码",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test.",
+      "duration_ms": 193.66
+    },
+    {
+      "id": "FMT-10",
+      "name": "TTA 自动转码",
+      "category": "格式-转码",
+      "verdict": "PASS",
+      "status_code": 200,
+      "expected_status": 200,
+      "body_summary": "success",
+      "body_text_preview": "This is a format test",
+      "duration_ms": 224.85
     },
     {
       "id": "URL-01",
@@ -126,7 +170,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 283.92
+      "duration_ms": 291.48
     },
     {
       "id": "BOUND-01",
@@ -137,7 +181,7 @@
       "expected_status": 400,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 4.71
+      "duration_ms": 4.89
     },
     {
       "id": "BOUND-02",
@@ -148,7 +192,7 @@
       "expected_status": 413,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 121.69
+      "duration_ms": 135.97
     },
     {
       "id": "ERROR-01",
@@ -159,7 +203,7 @@
       "expected_status": 500,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 60.6
+      "duration_ms": 318.09
     },
     {
       "id": "ERROR-02",
@@ -170,7 +214,7 @@
       "expected_status": 404,
       "body_summary": "",
       "body_text_preview": "Not Found",
-      "duration_ms": 2.31
+      "duration_ms": 2.7
     },
     {
       "id": "RATE-01",
@@ -181,7 +225,7 @@
       "expected_status": "限流生效 (≤30次成功)",
       "body_summary": "no-limit",
       "body_text_preview": "成功35次, 失败0次",
-      "duration_ms": 4580.91
+      "duration_ms": 5019.24
     }
   ]
 }

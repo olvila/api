@@ -1,3 +1,4 @@
+import asyncio
 import time
 from urllib.parse import unquote
 
@@ -72,6 +73,10 @@ async def transcribe(
             assert url is not None
             result = await nim.transcribe_from_url(url)
             file_size = 0  # URL 模式无法提前知晓大小
+    except asyncio.TimeoutError:
+        return _error(504, "请求超时", start_time, filename, file_size, result="timeout")
+    except ValueError as e:
+        return _error(400, str(e), start_time, filename, file_size)
     except Exception as e:
         return _error(500, str(e), start_time, filename, file_size)
 
@@ -82,6 +87,7 @@ async def transcribe(
         filename=filename,
         file_size_bytes=file_size,
         status="success" if text else "empty",
+        result="success",
         text=text,
         duration_ms=duration_ms,
     )
@@ -101,12 +107,14 @@ def _error(
     start_time: float,
     filename: str,
     file_size: int,
+    result: str = "error",
 ) -> JSONResponse:
     duration_ms = (time.time() - start_time) * 1000
     log_request(
         filename=filename,
         file_size_bytes=file_size,
-        status="error",
+        status="timeout" if result == "timeout" else "error",
+        result=result,
         text="",
         duration_ms=duration_ms,
         error=message,
@@ -115,7 +123,7 @@ def _error(
         status_code=code,
         content={
             "status_code": code,
-            "result": "error",
+            "result": result,
             "text": "",
             "error": message,
         },

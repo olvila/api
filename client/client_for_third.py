@@ -8,7 +8,7 @@
 """
 import requests
 
-ASR_API_URL = "http://localhost:8008/v1/audio/transcriptions"
+ASR_API_URL = "http://你的服务器IP:8008/v1/audio/transcriptions"
 
 
 def call_asr_from_bytes(file_bytes: bytes, filename: str) -> dict:

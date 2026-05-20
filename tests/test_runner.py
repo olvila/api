@@ -29,7 +29,7 @@ def _prepare_test_files():
     subprocess.run(["afconvert", "-f", "m4af", "-d", "aac", str(src), str(TEST_DIR / "test.m4a")], check=True)
     subprocess.run(["ffmpeg", "-y", "-i", str(src), "-ar", "16000", "-ac", "1", str(TEST_DIR / "test.ogg")], capture_output=True, check=True)
     subprocess.run(["ffmpeg", "-y", "-i", str(src), "-ar", "16000", "-ac", "1", "-c:a", "aac", str(TEST_DIR / "test.aac")], capture_output=True, check=True)
-    subprocess.run(["ffmpeg", "-y", "-i", str(src), "-ar", "16000", "-ac", "1", "-c:a", "ac3", str(TEST_DIR / "test.ac3")], capture_output=True, check=True)
+    subprocess.run(["ffmpeg", "-y", "-i", str(src), "-ar", "48000", "-ac", "1", "-c:a", "ac3", str(TEST_DIR / "test.ac3")], capture_output=True, check=True)
     subprocess.run(["ffmpeg", "-y", "-i", str(src), "-ar", "16000", "-ac", "1", "-c:a", "wmav2", str(TEST_DIR / "test.wma")], capture_output=True, check=True)
     subprocess.run(["ffmpeg", "-y", "-i", str(src), "-ar", "16000", "-ac", "1", str(TEST_DIR / "test.tta")], capture_output=True, check=True)
 
