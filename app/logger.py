@@ -34,27 +34,54 @@ def _get_logger() -> logging.Logger:
     return _logger
 
 
-def query_logs(page: int = 1, size: int = 20) -> dict:
-    """查询历史请求日志，支持分页"""
+def _parse_ts(ts: str) -> datetime:
+    ts = ts.removesuffix(" UTC").strip()
+    if len(ts) == 19 and ts[16] == ":":
+        ts = ts[:16]  # 兼容旧格式 HH:MM:SS → HH:MM
+    if len(ts) == 10:
+        ts += " 00:00"  # 仅日期 → 当天 00:00
+    elif len(ts) == 13:
+        ts += ":00"     # 日期+小时 → 整点
+    try:
+        return datetime.strptime(ts, "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+    except ValueError:
+        raise ValueError(
+            f"时间格式错误: '{ts}'，支持格式: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 16:30"
+        ) from None
+
+
+def query_logs(
+    page: int = 1,
+    size: int = 20,
+    start: str | None = None,
+    end: str | None = None,
+) -> dict:
+    """查询历史请求日志，支持分页和时间范围过滤"""
     log_files = sorted(LOG_DIR.glob("asr.log*"), reverse=True)
     entries: list[dict] = []
 
-    # 从当前日志文件读取所有 JSON lines
+    t_start = _parse_ts(start) if start else datetime.min.replace(tzinfo=timezone.utc)
+    t_end = _parse_ts(end) if end else datetime.max.replace(tzinfo=timezone.utc)
+
     for f in log_files:
         if f.exists():
             for line in f.read_text(encoding="utf-8").strip().split("\n"):
-                if line.strip():
-                    try:
-                        entries.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        pass
+                if not line.strip():
+                    continue
+                try:
+                    entry = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                ts = entry.get("timestamp", "")
+                if ts and t_start <= _parse_ts(ts) <= t_end:
+                    entries.append(entry)
 
     entries.reverse()  # 最新的在前
 
     total = len(entries)
-    start = (page - 1) * size
-    end = start + size
-    page_entries = entries[start:end]
+    idx_start = (page - 1) * size
+    idx_end = idx_start + size
+    page_entries = entries[idx_start:idx_end]
 
     return {
         "total": total,
@@ -75,7 +102,7 @@ def log_request(
     result: str = "",
 ) -> None:
     entry = {
-        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "filename": filename,
         "file_size_bytes": file_size_bytes,
         "status": status,

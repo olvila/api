@@ -2,7 +2,7 @@ import asyncio
 import time
 from urllib.parse import unquote
 
-from fastapi import FastAPI, File, Form, UploadFile, Request
+from fastapi import FastAPI, File, Form, Query, UploadFile, Request
 from fastapi.responses import JSONResponse
 
 from app.config import MAX_FILE_SIZE_BYTES, NIM_API_KEY
@@ -25,9 +25,25 @@ async def health() -> dict:
 
 
 @app.get("/v1/logs")
-async def get_logs(page: int = 1, size: int = 20) -> dict:
-    """查询历史转写日志"""
-    return query_logs(page=page, size=size)
+async def get_logs(
+    page: int = Query(1, description="页码"),
+    size: int = Query(20, description="每页条数"),
+    start: str | None = Query(None, description="起始时间: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 16:30"),
+    end: str | None = Query(None, description="结束时间: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 17:30"),
+) -> dict:
+    """查询历史转写日志，支持时间范围过滤"""
+    try:
+        return query_logs(page=page, size=size, start=start, end=end)
+    except ValueError as e:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "status_code": 400,
+                "result": "error",
+                "text": "",
+                "error": str(e),
+            },
+        )
 
 
 @app.post("/v1/audio/transcriptions")
