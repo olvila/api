@@ -34,15 +34,17 @@ GET /v1/logs?page=1&size=20&start=2026-05-20 16:30&end=2026-05-20 17:30
 |------|------|------|------|
 | `page` | int | 1 | 页码，必须 ≥ 1 |
 | `size` | int | 20 | 每页条数，必须 ≥ 1 |
-| `start` | string | 无 | 起始时间: `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM` |
-| `end` | string | 无 | 结束时间: `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM` |
+| `start` | string | 无 | 起始时间: `YYYY-MM-DD` / `YYYY-MM-DD HH` / `YYYY-MM-DD HH:MM` |
+| `end` | string | 无 | 结束时间: `YYYY-MM-DD` / `YYYY-MM-DD HH` / `YYYY-MM-DD HH:MM` |
 
-**时间格式:** 支持两种精度（UTC），末尾可选带 ` UTC` 后缀：
+**时间格式:** 支持多种精度（UTC），末尾可选带 ` UTC` 后缀：
 
 | 格式 | 示例 | 含义 |
 |------|------|------|
 | `YYYY-MM-DD` | `2026-05-21` | 当天 00:00 |
+| `YYYY-MM-DD HH` | `2026-05-21 16` | 当天 16:00（整点） |
 | `YYYY-MM-DD HH:MM` | `2026-05-21 16:30` | 精确到分钟 |
+| `YYYY-MM-DD HH:MM:SS` | `2026-05-21 16:30:00` | 精确到秒（兼容，实际按分钟存储） |
 
 `start` / `end` 均为可选参数，可自由组合：
 
@@ -97,6 +99,28 @@ curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00"
 | `text_preview` | 转写文本前 200 字符 |
 | `duration_ms` | 处理耗时（毫秒）|
 | `error` | 错误信息（仅失败时）|
+
+**错误响应:**
+
+**page/size 不合法 (400):**
+```json
+{
+  "status_code": 400,
+  "result": "error",
+  "text": "",
+  "error": "page 和 size 必须 ≥ 1"
+}
+```
+
+**时间格式错误 (400):**
+```json
+{
+  "status_code": 400,
+  "result": "error",
+  "text": "",
+  "error": "时间格式错误: '...'，支持格式: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 16:30"
+}
+```
 
 > 日志文件存储在 `logs/asr.log`，JSON lines 格式，每天凌晨轮转，保留 30 天。
 
@@ -155,7 +179,7 @@ Content-Type: multipart/form-data
 |--------|--------|------|
 | 200 | success | 转写成功 |
 | 504 | timeout | 请求超时 |
-| 400 | error | 参数错误 / 文件为空 / 格式不支持 / file和url同时使用 / 时间格式错误 |
+| 400 | error | 参数错误 / 文件为空 / 格式不支持 / file和url同时使用 / URL文件过大 |
 | 413 | error | 文件大小超限 |
 | 500 | error | 服务内部错误 |
 
@@ -218,10 +242,20 @@ Content-Type: multipart/form-data
 }
 ```
 
-**文件过大 (413):**
+**文件过大 — 上传 (413):**
 ```json
 {
   "status_code": 413,
+  "result": "error",
+  "text": "",
+  "error": "文件大小 31.0MB 超过限制 30MB"
+}
+```
+
+**文件过大 — URL (400):**
+```json
+{
+  "status_code": 400,
   "result": "error",
   "text": "",
   "error": "文件大小 31.0MB 超过限制 30MB"
