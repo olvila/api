@@ -113,6 +113,8 @@ curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00" \
 }
 ```
 
+> 认证说明: 日志查询和转写接口共用 `moi_key` 认证，缺失或无效同样返回 401。
+> 
 > 日志文件存储在 `logs/asr.log`，JSON lines 格式，每天凌晨轮转，保留 30 天。
 
 ---
@@ -274,6 +276,36 @@ Content-Type: multipart/form-data
   "result": "error",
   "text": "",
   "error": "文件大小 31.0MB 超过限制 30MB"
+}
+```
+
+**URL 下载失败 — 连接错误 (400):**
+```json
+{
+  "status_code": 400,
+  "result": "error",
+  "text": "",
+  "error": "音频下载失败，无法连接到服务器"
+}
+```
+
+**URL 下载失败 — HTTP 错误 (400):**
+```json
+{
+  "status_code": 400,
+  "result": "error",
+  "text": "",
+  "error": "音频下载失败，服务器返回 404"
+}
+```
+
+**服务内部错误 (500):**
+```json
+{
+  "status_code": 500,
+  "result": "error",
+  "text": "",
+  "error": "错误详情"
 }
 ```
 
