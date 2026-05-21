@@ -25,15 +25,13 @@ GET /health
 ## 2. 查询日志
 
 ```
-GET /v1/logs?page=1&size=20&start=2026-05-20 16:30&end=2026-05-20 17:30
+GET /v1/logs?start=2026-05-20 16:30&end=2026-05-20 17:30
 ```
 
 **请求参数:**
 
 | 参数 | 类型 | 默认 | 说明 |
 |------|------|------|------|
-| `page` | int | 1 | 页码，必须 ≥ 1 |
-| `size` | int | 20 | 每页条数，必须 ≥ 1 |
 | `start` | string | 无 | 起始时间: `YYYY-MM-DD` / `YYYY-MM-DD HH` / `YYYY-MM-DD HH:MM` |
 | `end` | string | 无 | 结束时间: `YYYY-MM-DD` / `YYYY-MM-DD HH` / `YYYY-MM-DD HH:MM` |
 | `moi_key` | string (Header) | 必填 | 身份校验 key |
@@ -80,8 +78,6 @@ curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00" \
 ```json
 {
   "total": 81,
-  "page": 1,
-  "size": 20,
   "entries": [
     {
       "timestamp": "2026-05-20 05:43 UTC",
@@ -106,16 +102,6 @@ curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00" \
 | `error` | 错误信息（仅失败时）|
 
 **错误响应:**
-
-**page/size 不合法 (400):**
-```json
-{
-  "status_code": 400,
-  "result": "error",
-  "text": "",
-  "error": "page 和 size 必须 ≥ 1"
-}
-```
 
 **时间格式错误 (400):**
 ```json

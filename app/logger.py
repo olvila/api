@@ -51,12 +51,10 @@ def _parse_ts(ts: str) -> datetime:
 
 
 def query_logs(
-    page: int = 1,
-    size: int = 20,
     start: str | None = None,
     end: str | None = None,
 ) -> dict:
-    """查询历史请求日志，支持分页和时间范围过滤"""
+    """查询历史请求日志，按时间范围过滤"""
     log_files = sorted(LOG_DIR.glob("asr.log*"), reverse=True)
     entries: list[dict] = []
 
@@ -78,16 +76,9 @@ def query_logs(
 
     entries.reverse()  # 最新的在前
 
-    total = len(entries)
-    idx_start = (page - 1) * size
-    idx_end = idx_start + size
-    page_entries = entries[idx_start:idx_end]
-
     return {
-        "total": total,
-        "page": page,
-        "size": size,
-        "entries": page_entries,
+        "total": len(entries),
+        "entries": entries,
     }
 
 

@@ -63,25 +63,13 @@ async def health() -> dict:
 
 @app.get("/v1/logs")
 async def get_logs(
-    page: int = Query(1, description="页码"),
-    size: int = Query(20, description="每页条数"),
     start: str | None = Query(None, description="起始时间: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 16:30"),
     end: str | None = Query(None, description="结束时间: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 17:30"),
     moi_key: str = Depends(verify_moi_key),
 ) -> dict:
     """查询历史转写日志，支持时间范围过滤"""
-    if page < 1 or size < 1:
-        return JSONResponse(
-            status_code=400,
-            content={
-                "status_code": 400,
-                "result": "error",
-                "text": "",
-                "error": "page 和 size 必须 ≥ 1",
-            },
-        )
     try:
-        return query_logs(page=page, size=size, start=start, end=end)
+        return query_logs(start=start, end=end)
     except ValueError as e:
         return JSONResponse(
             status_code=400,
