@@ -27,6 +27,8 @@ echo ""
 read -p "请输入 NVIDIA API KEY: " NIM_API_KEY
 [ -z "$NIM_API_KEY" ] && err "API KEY 不能为空"
 
+read -p "请输入 MOI_KEYS (多个 key 用逗号分隔，留空跳过校验): " MOI_KEYS
+
 read -p "请输入服务器域名或公网 IP: " SERVER_NAME
 [ -z "$SERVER_NAME" ] && err "域名/IP 不能为空"
 
@@ -74,6 +76,7 @@ log "安装 Python 依赖..."
 log "写入环境变量..."
 cat > "${DEPLOY_DIR}/asr.env" << EOF
 NIM_API_KEY=${NIM_API_KEY}
+MOI_KEYS=${MOI_KEYS}
 MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB}
 REQUEST_TIMEOUT_SEC=${REQUEST_TIMEOUT_SEC}
 EOF
@@ -131,6 +134,7 @@ if [ "$HTTP_CODE" = "200" ]; then
     echo ""
     echo " 转写接口:"
     echo "   curl -X POST http://${SERVER_NAME}/v1/audio/transcriptions \\"
+    echo "     -H \"moi_key: YOUR_KEY\" \\"
     echo "     -F \"file=@test.wav\""
     echo ""
     echo " 查看日志: journalctl -u asr -f"
