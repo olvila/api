@@ -5,7 +5,7 @@
 - Base URL: `http://localhost:8008`
 - 协议: HTTP REST
 - 单段超时: 60 秒（总耗时: 文件上传约 90s / URL 模式约 120s）
-- Demo 限速: 约 30 次/分钟（NVIDIA 试用 Key 限制）
+- 限速: 30 次/分钟（按 moi_key 计数，超出返回 429）
 
 ---
 

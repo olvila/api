@@ -7,7 +7,7 @@
 - 仓库: https://github.com/olvila/api
 - API 文档: `/docs` (Swagger UI)
 - 健康检查: `/health`
-- 日志查询: `/v1/logs?page=1&size=20`
+- 日志查询: `/v1/logs?start=...&end=...`
 
 ---
 
@@ -102,7 +102,7 @@ JSON lines，每条一行：
 ### 日志轮转
 
 - 每天凌晨自动切割，保留 30 天
-- 通过 `/v1/logs?page=1&size=20` 接口远程查询
+- 通过 `/v1/logs` 接口按时间段远程查询
 
 ---
 
@@ -357,17 +357,19 @@ systemctl reload nginx
 |------|------|------|
 | `/health` | GET | 健康检查 `{"status":"ok"}` |
 | `/v1/audio/transcriptions` | POST | 语音转文本 |
-| `/v1/logs?page=1&size=20` | GET | 分页查询日志 |
+| `/v1/logs` | GET | 按时间段查询日志 |
 
 **转写接口调用:**
 
 ```bash
 # 上传文件
 curl -X POST http://你的服务器/v1/audio/transcriptions \
+  -H "moi_key: YOUR_KEY" \
   -F "file=@音频文件.wav"
 
 # 公网 URL
 curl -X POST http://你的服务器/v1/audio/transcriptions \
+  -H "moi_key: YOUR_KEY" \
   -F "url=https://example.com/audio.mp3"
 ```
 
@@ -413,7 +415,7 @@ curl -X POST http://你的服务器/v1/audio/transcriptions \
 | Nginx 502 | asr 容器是否运行，Nginx 代理地址是否正确（Docker: `asr:8008`, 裸机: `127.0.0.1:8008`） |
 | 上传非音频返回 400 | 预期行为，只支持音频格式 |
 | 请求超时 | 检查 NIM_API_KEY 是否有效，服务器能否出站访问 `grpc.nvcf.nvidia.com:443` |
-| 转写结果为空 | 查看转写日志 `logs/asr.log` 的 `text_preview` 和 `status` 字段 |
+| 转写结果为空 | 查看转写日志 `logs/asr.log` 的 `text_preview` 和 `result` 字段 |
 | gRPC 连接失败 | 服务器需能解析并连接 `grpc.nvcf.nvidia.com` (NVIDIA 云服务) |
 
 ```bash
@@ -439,9 +441,10 @@ import requests
 resp = requests.post(
     "http://你的服务器/v1/audio/transcriptions",
     files={"file": ("文件名.mp3", file_bytes)},
+    headers={"moi_key": "YOUR_KEY"},
     timeout=65,
 )
 print(resp.json()["text"])
 ```
 
-任何语言均可集成（Java/Go/JS），本质就是一个带文件上传的 HTTP POST。
+任何语言均可集成（Java/Go/JS），本质就是一个带文件上传 + moi_key header 的 HTTP POST。
