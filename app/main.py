@@ -32,6 +32,16 @@ async def get_logs(
     end: str | None = Query(None, description="结束时间: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 17:30"),
 ) -> dict:
     """查询历史转写日志，支持时间范围过滤"""
+    if page < 1 or size < 1:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "status_code": 400,
+                "result": "error",
+                "text": "",
+                "error": "page 和 size 必须 ≥ 1",
+            },
+        )
     try:
         return query_logs(page=page, size=size, start=start, end=end)
     except ValueError as e:
@@ -54,10 +64,14 @@ async def transcribe(
 ) -> JSONResponse:
     start_time = time.time()
 
-    # 确定输入来源
-    if file and file.filename:
+    # 确定输入来源（file 和 url 只能二选一）
+    has_file = file and file.filename
+    has_url = bool(url)
+    if has_file and has_url:
+        return _error(400, "file 和 url 不能同时使用，请二选一", start_time, "", 0)
+    if has_file:
         filename = file.filename
-    elif url:
+    elif has_url:
         filename = unquote(url.rsplit("/", 1)[-1].split("?")[0]) or "audio_from_url"
     else:
         return _error(400, "请提供 file (上传文件) 或 url (公网地址)", start_time, "", 0)

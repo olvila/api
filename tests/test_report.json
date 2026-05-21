@@ -1,11 +1,11 @@
 {
-  "test_time": "2026-05-20 08:32:31 UTC",
+  "test_time": "2026-05-21 07:58:41 UTC",
   "service": "http://localhost:8008",
   "total": 20,
-  "passed": 19,
-  "failed": 1,
-  "pass_rate": "95.0%",
-  "total_duration_sec": 10.1,
+  "passed": 18,
+  "failed": 2,
+  "pass_rate": "90.0%",
+  "total_duration_sec": 239.5,
   "results": [
     {
       "id": "FUNC-01",
@@ -16,7 +16,7 @@
       "expected_status": 200,
       "body_summary": "",
       "body_text_preview": "",
-      "duration_ms": 16.78
+      "duration_ms": 65.14
     },
     {
       "id": "FUNC-02",
@@ -27,7 +27,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 1162.35
+      "duration_ms": 21955.54
     },
     {
       "id": "FUNC-03",
@@ -38,7 +38,7 @@
       "expected_status": 400,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 4.92
+      "duration_ms": 4.31
     },
     {
       "id": "FUNC-04",
@@ -49,7 +49,7 @@
       "expected_status": 200,
       "body_summary": "",
       "body_text_preview": "",
-      "duration_ms": 4.15
+      "duration_ms": 2.97
     },
     {
       "id": "FMT-01",
@@ -60,7 +60,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 383.2
+      "duration_ms": 1196.34
     },
     {
       "id": "FMT-02",
@@ -71,7 +71,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test",
-      "duration_ms": 227.02
+      "duration_ms": 2101.02
     },
     {
       "id": "FMT-03",
@@ -82,7 +82,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 220.69
+      "duration_ms": 18123.85
     },
     {
       "id": "FMT-04",
@@ -93,7 +93,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 213.14
+      "duration_ms": 7172.19
     },
     {
       "id": "FMT-05",
@@ -104,7 +104,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 626.34
+      "duration_ms": 1862.42
     },
     {
       "id": "FMT-06",
@@ -115,7 +115,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "you",
-      "duration_ms": 190.56
+      "duration_ms": 24859.83
     },
     {
       "id": "FMT-07",
@@ -126,7 +126,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 254.78
+      "duration_ms": 4801.1
     },
     {
       "id": "FMT-08",
@@ -137,7 +137,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 168.57
+      "duration_ms": 648.08
     },
     {
       "id": "FMT-09",
@@ -148,7 +148,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 193.66
+      "duration_ms": 7864.32
     },
     {
       "id": "FMT-10",
@@ -159,7 +159,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test",
-      "duration_ms": 224.85
+      "duration_ms": 2308.16
     },
     {
       "id": "URL-01",
@@ -170,7 +170,7 @@
       "expected_status": 200,
       "body_summary": "success",
       "body_text_preview": "This is a format test.",
-      "duration_ms": 291.48
+      "duration_ms": 1310.27
     },
     {
       "id": "BOUND-01",
@@ -181,7 +181,7 @@
       "expected_status": 400,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 4.89
+      "duration_ms": 4.46
     },
     {
       "id": "BOUND-02",
@@ -192,18 +192,18 @@
       "expected_status": 413,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 135.97
+      "duration_ms": 165.08
     },
     {
       "id": "ERROR-01",
       "name": "非音频文件上传",
       "category": "异常",
-      "verdict": "PASS",
-      "status_code": 500,
+      "verdict": "FAIL",
+      "status_code": 400,
       "expected_status": 500,
       "body_summary": "error",
       "body_text_preview": "",
-      "duration_ms": 318.09
+      "duration_ms": 64.37
     },
     {
       "id": "ERROR-02",
@@ -214,18 +214,18 @@
       "expected_status": 404,
       "body_summary": "",
       "body_text_preview": "Not Found",
-      "duration_ms": 2.7
+      "duration_ms": 2.56
     },
     {
       "id": "RATE-01",
       "name": "高频请求限流 (>30次/分钟)",
       "category": "限流",
       "verdict": "WARN",
-      "status_code": "ok=35/err=0/35",
+      "status_code": "ok=33/err=2/35",
       "expected_status": "限流生效 (≤30次成功)",
       "body_summary": "no-limit",
-      "body_text_preview": "成功35次, 失败0次",
-      "duration_ms": 5019.24
+      "body_text_preview": "成功33次, 失败2次",
+      "duration_ms": 144451.18
     }
   ]
 }

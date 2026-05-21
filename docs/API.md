@@ -32,8 +32,8 @@ GET /v1/logs?page=1&size=20&start=2026-05-20 16:30&end=2026-05-20 17:30
 
 | 参数 | 类型 | 默认 | 说明 |
 |------|------|------|------|
-| `page` | int | 1 | 页码 |
-| `size` | int | 20 | 每页条数 |
+| `page` | int | 1 | 页码，必须 ≥ 1 |
+| `size` | int | 20 | 每页条数，必须 ≥ 1 |
 | `start` | string | 无 | 起始时间: `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM` |
 | `end` | string | 无 | 结束时间: `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM` |
 
@@ -157,7 +157,7 @@ Content-Type: multipart/form-data
 |--------|--------|------|
 | 200 | success | 转写成功 |
 | 504 | timeout | 请求超时 |
-| 400 | error | 参数错误或格式不支持 |
+| 400 | error | 参数错误 / 格式不支持 / file和url同时使用 |
 | 413 | error | 文件大小超限 |
 | 500 | error | 服务内部错误 |
 
@@ -187,6 +187,16 @@ Content-Type: multipart/form-data
   "result": "error",
   "text": "",
   "error": "请提供 file (上传文件) 或 url (公网地址)"
+}
+```
+
+**file 和 url 同时使用 (400):**
+```json
+{
+  "status_code": 400,
+  "result": "error",
+  "text": "",
+  "error": "file 和 url 不能同时使用，请二选一"
 }
 ```
 
@@ -270,4 +280,4 @@ print(resp.json()["text"])
 - 语言自动检测，中英文均可识别
 - 返回的 `text` 字段包含自动标点
 - 调用方无需关心音频格式，MP3/M4A 等非原生格式服务端自动转码
-- 仅支持单次上传单个文件，传多个文件会静默忽略额外的
+- 仅支持单次上传单个文件，不能同时使用 file 和 url

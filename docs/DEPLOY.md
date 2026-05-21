@@ -78,7 +78,7 @@ JSON lines，每条一行：
 
 ```json
 {
-  "timestamp": "2026-05-21 09:36:30 UTC",
+  "timestamp": "2026-05-21 09:36 UTC",
   "filename": "test.wav",
   "file_size_bytes": 69118,
   "status": "success",
@@ -92,7 +92,7 @@ JSON lines，每条一行：
 
 | 字段 | 说明 |
 |------|------|
-| `timestamp` | 请求时间，精确到秒，UTC |
+| `timestamp` | 请求时间，精确到分钟，UTC |
 | `filename` | 上传的文件名 |
 | `file_size_bytes` | 文件大小（字节） |
 | `status` | 内部状态: `success` / `empty` / `error` / `timeout` |

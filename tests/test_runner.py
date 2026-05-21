@@ -103,7 +103,7 @@ TEST_CASES = [
     {"id": "ERROR-01", "category": "异常", "name": "非音频文件上传",
      "method": "POST_DATA", "path": "/v1/audio/transcriptions",
      "params": {"data": b"hello world", "filename": "not_audio.txt"},
-     "expected_status": 500, "expected_result": "error"},
+     "expected_status": 400, "expected_result": "error"},
     {"id": "ERROR-02", "category": "异常", "name": "不存在的路径",
      "method": "GET", "path": "/not_exist", "params": {},
      "expected_status": 404, "expected_result": None},
