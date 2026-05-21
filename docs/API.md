@@ -185,6 +185,7 @@ Content-Type: multipart/form-data
 |--------|--------|------|
 | 200 | success | 转写成功 |
 | 401 | error | moi_key 缺失或无效 |
+| 429 | error | 请求过于频繁（每分钟最多 30 次） |
 | 400 | error | 参数错误 / 文件为空 / 格式不支持 / file和url同时使用 / URL文件过大 |
 | 504 | timeout | 请求超时 |
 | 413 | error | 文件大小超限 |
@@ -210,6 +211,13 @@ Content-Type: multipart/form-data
 ```json
 {
   "detail": "无效的 moi_key"
+}
+```
+
+**请求过于频繁 (429):**
+```json
+{
+  "detail": "请求过于频繁，每分钟最多 30 次"
 }
 ```
 

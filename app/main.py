@@ -1,5 +1,7 @@
 import asyncio
+import threading
 import time
+from collections import defaultdict
 from urllib.parse import unquote
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, UploadFile, Request
@@ -18,6 +20,33 @@ def verify_moi_key(moi_key: str | None = Header(None, alias="moi_key")) -> str:
         raise HTTPException(status_code=401, detail="缺少 moi_key")
     if moi_key not in VALID_MOI_KEYS:
         raise HTTPException(status_code=401, detail="无效的 moi_key")
+    return moi_key
+
+
+class RateLimiter:
+    def __init__(self, max_requests: int = 30, window_sec: int = 60) -> None:
+        self._max = max_requests
+        self._window = window_sec
+        self._hits: dict[str, list[float]] = defaultdict(list)
+        self._lock = threading.Lock()
+
+    def check(self, key: str) -> bool:
+        now = time.time()
+        cutoff = now - self._window
+        with self._lock:
+            self._hits[key] = [t for t in self._hits[key] if t > cutoff]
+            if len(self._hits[key]) >= self._max:
+                return False
+            self._hits[key].append(now)
+            return True
+
+
+_rate_limiter = RateLimiter(max_requests=30, window_sec=60)
+
+
+def check_rate_limit(moi_key: str = Depends(verify_moi_key)) -> str:
+    if not _rate_limiter.check(moi_key):
+        raise HTTPException(status_code=429, detail="请求过于频繁，每分钟最多 30 次")
     return moi_key
 
 
@@ -70,7 +99,7 @@ async def transcribe(
     request: Request,
     file: UploadFile | None = File(None),
     url: str = Form(""),
-    moi_key: str = Depends(verify_moi_key),
+    moi_key: str = Depends(check_rate_limit),
 ) -> JSONResponse:
     start_time = time.time()
 
