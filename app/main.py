@@ -60,7 +60,7 @@ async def get_logs(
 async def transcribe(
     request: Request,
     file: UploadFile | None = File(None),
-    url: str | None = Form(None),
+    url: str = Form(""),
 ) -> JSONResponse:
     start_time = time.time()
 
@@ -116,7 +116,6 @@ async def transcribe(
     log_request(
         filename=filename,
         file_size_bytes=file_size,
-        status="success" if text else "empty",
         result="success",
         text=text,
         duration_ms=duration_ms,
@@ -143,7 +142,6 @@ def _error(
     log_request(
         filename=filename,
         file_size_bytes=file_size,
-        status="timeout" if result == "timeout" else "error",
         result=result,
         text="",
         duration_ms=duration_ms,

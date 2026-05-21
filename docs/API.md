@@ -80,7 +80,6 @@ curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00"
       "timestamp": "2026-05-20 05:43 UTC",
       "filename": "test.wav",
       "file_size_bytes": 51196,
-      "status": "success",
       "result": "success",
       "text_preview": "This is a format test.",
       "duration_ms": 121.81
@@ -94,7 +93,6 @@ curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00"
 | `timestamp` | 请求时间（精确到分钟，UTC）|
 | `filename` | 上传的文件名 |
 | `file_size_bytes` | 文件大小（字节）|
-| `status` | success / error / empty / timeout |
 | `result` | success / error / timeout |
 | `text_preview` | 转写文本前 200 字符 |
 | `duration_ms` | 处理耗时（毫秒）|
@@ -157,7 +155,7 @@ Content-Type: multipart/form-data
 |--------|--------|------|
 | 200 | success | 转写成功 |
 | 504 | timeout | 请求超时 |
-| 400 | error | 参数错误 / 格式不支持 / file和url同时使用 |
+| 400 | error | 参数错误 / 文件为空 / 格式不支持 / file和url同时使用 / 时间格式错误 |
 | 413 | error | 文件大小超限 |
 | 500 | error | 服务内部错误 |
 
@@ -197,6 +195,16 @@ Content-Type: multipart/form-data
   "result": "error",
   "text": "",
   "error": "file 和 url 不能同时使用，请二选一"
+}
+```
+
+**文件为空 (400):**
+```json
+{
+  "status_code": 400,
+  "result": "error",
+  "text": "",
+  "error": "文件为空，请上传有效的音频文件"
 }
 ```
 

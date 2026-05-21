@@ -81,7 +81,6 @@ JSON lines，每条一行：
   "timestamp": "2026-05-21 09:36 UTC",
   "filename": "test.wav",
   "file_size_bytes": 69118,
-  "status": "success",
   "result": "success",
   "text_preview": "你好 这是一个语音识别测试。",
   "duration_ms": 1027.2
@@ -95,8 +94,7 @@ JSON lines，每条一行：
 | `timestamp` | 请求时间，精确到分钟，UTC |
 | `filename` | 上传的文件名 |
 | `file_size_bytes` | 文件大小（字节） |
-| `status` | 内部状态: `success` / `empty` / `error` / `timeout` |
-| `result` | API 返回类型: `success` / `error` / `timeout` |
+| `result` | 结果类型: `success` / `error` / `timeout` |
 | `text_preview` | 转写文本前 200 字符 |
 | `duration_ms` | 处理耗时（毫秒） |
 | `error` | 错误信息（仅失败时） |
