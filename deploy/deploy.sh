@@ -29,10 +29,15 @@ read -p "请输入 NVIDIA API KEY: " NIM_API_KEY
 
 read -p "请输入 MOI_KEYS (多个 key 用逗号分隔，留空跳过校验): " MOI_KEYS
 
-read -p "请输入服务器域名或公网 IP: " SERVER_NAME
-[ -z "$SERVER_NAME" ] && err "域名/IP 不能为空"
+read -p "是否部署 Nginx 反向代理? (y/n, demo 环境可选 n): " USE_NGINX
 
-read -p "是否配置 SSL 证书? (y/n, 需已绑定域名): " ENABLE_SSL
+if [ "$USE_NGINX" = "y" ]; then
+    read -p "请输入服务器域名或公网 IP: " SERVER_NAME
+    [ -z "$SERVER_NAME" ] && err "域名/IP 不能为空"
+fi
+
+read -p "服务监听端口(默认 8008): " SERVER_PORT
+SERVER_PORT=${SERVER_PORT:-8008}
 
 read -p "文件大小限制(默认 30MB): " MAX_FILE_SIZE_MB
 MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-30}
@@ -47,8 +52,13 @@ log "开始部署..."
 log "更新软件包..."
 apt update -qq
 
-log "安装依赖 (python3, ffmpeg, nginx)..."
-apt install -y -qq python3 python3-pip python3-venv ffmpeg nginx certbot python3-certbot-nginx
+if [ "$USE_NGINX" = "y" ]; then
+    log "安装依赖 (python3, ffmpeg, nginx)..."
+    apt install -y -qq python3 python3-pip python3-venv ffmpeg nginx
+else
+    log "安装依赖 (python3, ffmpeg)..."
+    apt install -y -qq python3 python3-pip python3-venv ffmpeg
+fi
 
 # ---------- 项目部署 ----------
 DEPLOY_DIR="/opt/asr-service"
@@ -84,11 +94,15 @@ chmod 600 "${DEPLOY_DIR}/asr.env"
 
 # ---------- 日志目录 ----------
 mkdir -p "${DEPLOY_DIR}/logs"
-chown -R www-data:www-data "${DEPLOY_DIR}"
 
 # ---------- systemd 服务 ----------
 log "配置 systemd 服务..."
-sed "s|/opt/asr-service|${DEPLOY_DIR}|g" "${SCRIPT_DIR}/asr.service" > /etc/systemd/system/asr.service
+if [ "$USE_NGINX" = "y" ]; then
+    chown -R www-data:www-data "${DEPLOY_DIR}"
+    sed -e "s|/opt/asr-service|${DEPLOY_DIR}|g" -e "s|--port 8008|--port ${SERVER_PORT}|g" "${SCRIPT_DIR}/asr.service" > /etc/systemd/system/asr.service
+else
+    sed -e "s|/opt/asr-service|${DEPLOY_DIR}|g" -e "s|--port 8008|--port ${SERVER_PORT}|g" -e "s|User=www-data||" "${SCRIPT_DIR}/asr.service" > /etc/systemd/system/asr.service
+fi
 
 systemctl daemon-reload
 systemctl enable asr
@@ -96,26 +110,24 @@ systemctl restart asr
 sleep 2
 
 # ---------- Nginx ----------
-log "配置 Nginx..."
-sed "s/SERVER_NAME_PLACEHOLDER/${SERVER_NAME}/g" "${SCRIPT_DIR}/nginx.conf" > /etc/nginx/sites-available/asr
-
-ln -sf /etc/nginx/sites-available/asr /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-nginx -t && systemctl reload nginx
+if [ "$USE_NGINX" = "y" ]; then
+    log "配置 Nginx..."
+    sed "s/SERVER_NAME_PLACEHOLDER/${SERVER_NAME}/g" "${SCRIPT_DIR}/nginx.conf" > /etc/nginx/sites-available/asr
+    ln -sf /etc/nginx/sites-available/asr /etc/nginx/sites-enabled/
+    rm -f /etc/nginx/sites-enabled/default
+    nginx -t && systemctl reload nginx
+fi
 
 # ---------- 防火墙 ----------
 log "配置防火墙..."
 ufw --force enable 2>/dev/null || true
 ufw allow 22/tcp 2>/dev/null || true
-ufw allow 80/tcp 2>/dev/null || true
-ufw allow 443/tcp 2>/dev/null || true
-ufw reload 2>/dev/null || true
-
-# ---------- SSL ----------
-if [ "$ENABLE_SSL" = "y" ]; then
-    log "配置 SSL 证书..."
-    certbot --nginx -d "${SERVER_NAME}" --non-interactive --agree-tos --email "admin@${SERVER_NAME}"
+ufw allow "${SERVER_PORT}/tcp" 2>/dev/null || true
+if [ "$USE_NGINX" = "y" ]; then
+    ufw allow 80/tcp 2>/dev/null || true
+    ufw allow 443/tcp 2>/dev/null || true
 fi
+ufw reload 2>/dev/null || true
 
 # ---------- 验证 ----------
 log "验证服务..."
