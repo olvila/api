@@ -16,6 +16,8 @@ nim = NimClient()
 
 
 def verify_moi_key(moi_key: str | None = Header(None, alias="moi_key")) -> str:
+    if not VALID_MOI_KEYS:
+        return ""  # 未配置 MOI_KEYS 时跳过校验
     if not moi_key:
         raise HTTPException(status_code=401, detail="缺少 moi_key")
     if moi_key not in VALID_MOI_KEYS:
@@ -45,6 +47,8 @@ _rate_limiter = RateLimiter(max_requests=30, window_sec=60)
 
 
 def check_rate_limit(moi_key: str = Depends(verify_moi_key)) -> str:
+    if not VALID_MOI_KEYS:
+        return ""
     if not _rate_limiter.check(moi_key):
         raise HTTPException(status_code=429, detail="请求过于频繁，每分钟最多 30 次")
     return moi_key
