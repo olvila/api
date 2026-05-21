@@ -1,0 +1,11 @@
+services:
+  asr:
+    build: .
+    container_name: asr-service
+    ports:
+      - "8008:8008"
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped

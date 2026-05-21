@@ -1,0 +1,14 @@
+.env
+.git
+.gitignore
+.venv
+venv
+logs
+__pycache__
+*.pyc
+.DS_Store
+deploy
+tests
+docs
+client
+*.md
