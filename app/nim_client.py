@@ -118,13 +118,16 @@ class NimClient:
         return {"text": text.strip()}
 
     async def transcribe_from_url(self, audio_url: str) -> dict:
-        # 先从公网 URL 下载音频文件到内存 bytes
-        async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT_SEC) as client:
-            dl_resp = await client.get(audio_url)
-            dl_resp.raise_for_status()
-            if len(dl_resp.content) > MAX_FILE_SIZE_BYTES:
-                raise ValueError(
-                    f"文件大小 {len(dl_resp.content) / 1024 / 1024:.1f}MB 超过限制 {MAX_FILE_SIZE_BYTES / 1024 / 1024:.0f}MB"
-                )
-            # 下载完成后走和直接上传相同的转写流程（含格式检测和转码）
-            return await self.transcribe(dl_resp.content, filename="audio_from_url")
+        try:
+            async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT_SEC) as client:
+                dl_resp = await client.get(audio_url)
+                dl_resp.raise_for_status()
+                if len(dl_resp.content) > MAX_FILE_SIZE_BYTES:
+                    raise ValueError(
+                        f"文件大小 {len(dl_resp.content) / 1024 / 1024:.1f}MB 超过限制 {MAX_FILE_SIZE_BYTES / 1024 / 1024:.0f}MB"
+                    )
+                return await self.transcribe(dl_resp.content, filename="audio_from_url")
+        except httpx.HTTPStatusError as e:
+            raise ValueError(f"音频下载失败，服务器返回 {e.response.status_code}")
+        except httpx.HTTPError:
+            raise ValueError("音频下载失败，无法连接到服务器")

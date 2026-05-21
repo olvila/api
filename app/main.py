@@ -108,7 +108,7 @@ async def transcribe(
     except ValueError as e:
         return _error(400, str(e), start_time, filename, file_size)
     except Exception as e:
-        return _error(500, str(e), start_time, filename, file_size)
+        return _error(500, str(e) or type(e).__name__, start_time, filename, file_size)
 
     duration_ms = (time.time() - start_time) * 1000
     text = result.get("text", "")
