@@ -2,15 +2,23 @@ import asyncio
 import time
 from urllib.parse import unquote
 
-from fastapi import FastAPI, File, Form, Query, UploadFile, Request
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, UploadFile, Request
 from fastapi.responses import JSONResponse
 
-from app.config import MAX_FILE_SIZE_BYTES, NIM_API_KEY
+from app.config import MAX_FILE_SIZE_BYTES, NIM_API_KEY, VALID_MOI_KEYS
 from app.logger import log_request, query_logs
 from app.nim_client import NimClient
 
 app = FastAPI(title="ASR Service", version="1.0.0")
 nim = NimClient()
+
+
+def verify_moi_key(moi_key: str | None = Header(None, alias="moi_key")) -> str:
+    if not moi_key:
+        raise HTTPException(status_code=401, detail="缺少 moi_key")
+    if moi_key not in VALID_MOI_KEYS:
+        raise HTTPException(status_code=401, detail="无效的 moi_key")
+    return moi_key
 
 
 @app.on_event("startup")
@@ -30,6 +38,7 @@ async def get_logs(
     size: int = Query(20, description="每页条数"),
     start: str | None = Query(None, description="起始时间: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 16:30"),
     end: str | None = Query(None, description="结束时间: YYYY-MM-DD / YYYY-MM-DD HH:MM，如 2026-05-21 或 2026-05-21 17:30"),
+    moi_key: str = Depends(verify_moi_key),
 ) -> dict:
     """查询历史转写日志，支持时间范围过滤"""
     if page < 1 or size < 1:
@@ -61,6 +70,7 @@ async def transcribe(
     request: Request,
     file: UploadFile | None = File(None),
     url: str = Form(""),
+    moi_key: str = Depends(verify_moi_key),
 ) -> JSONResponse:
     start_time = time.time()
 

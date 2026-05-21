@@ -36,6 +36,7 @@ GET /v1/logs?page=1&size=20&start=2026-05-20 16:30&end=2026-05-20 17:30
 | `size` | int | 20 | 每页条数，必须 ≥ 1 |
 | `start` | string | 无 | 起始时间: `YYYY-MM-DD` / `YYYY-MM-DD HH` / `YYYY-MM-DD HH:MM` |
 | `end` | string | 无 | 结束时间: `YYYY-MM-DD` / `YYYY-MM-DD HH` / `YYYY-MM-DD HH:MM` |
+| `moi_key` | string (Header) | 必填 | 身份校验 key |
 
 **时间格式:** 支持多种精度（UTC），末尾可选带 ` UTC` 后缀：
 
@@ -59,16 +60,20 @@ GET /v1/logs?page=1&size=20&start=2026-05-20 16:30&end=2026-05-20 17:30
 
 ```bash
 # 查询 5月21日 全部日志
-curl "http://localhost:8008/v1/logs?start=2026-05-21&end=2026-05-22"
+curl "http://localhost:8008/v1/logs?start=2026-05-21&end=2026-05-22" \
+  -H "moi_key: YOUR_KEY"
 
 # 查询昨天下午 4:30 到 5:30
-curl "http://localhost:8008/v1/logs?start=2026-05-20%2016:30&end=2026-05-20%2017:30"
+curl "http://localhost:8008/v1/logs?start=2026-05-20%2016:30&end=2026-05-20%2017:30" \
+  -H "moi_key: YOUR_KEY"
 
 # 查询今天所有日志
-curl "http://localhost:8008/v1/logs?start=2026-05-21"
+curl "http://localhost:8008/v1/logs?start=2026-05-21" \
+  -H "moi_key: YOUR_KEY"
 
 # 查询昨天上午之前的所有日志
-curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00"
+curl "http://localhost:8008/v1/logs?end=2026-05-20%2012:00" \
+  -H "moi_key: YOUR_KEY"
 ```
 
 **响应示例:**
@@ -139,6 +144,7 @@ Content-Type: multipart/form-data
 |------|------|------|
 | `file` | file | 上传音频文件，≤30MB |
 | `url` | string | 音频文件公网 URL |
+| `moi_key` | string (Header) | 身份校验 key，必填 |
 
 **支持的音频格式:**
 
@@ -178,8 +184,9 @@ Content-Type: multipart/form-data
 | 状态码 | result | 说明 |
 |--------|--------|------|
 | 200 | success | 转写成功 |
-| 504 | timeout | 请求超时 |
+| 401 | error | moi_key 缺失或无效 |
 | 400 | error | 参数错误 / 文件为空 / 格式不支持 / file和url同时使用 / URL文件过大 |
+| 504 | timeout | 请求超时 |
 | 413 | error | 文件大小超限 |
 | 500 | error | 服务内部错误 |
 
@@ -189,6 +196,20 @@ Content-Type: multipart/form-data
   "status_code": 200,
   "result": "success",
   "text": "你好 这是一个语音识别测试。"
+}
+```
+
+**认证失败 — 缺失 (401):**
+```json
+{
+  "detail": "缺少 moi_key"
+}
+```
+
+**认证失败 — 无效 (401):**
+```json
+{
+  "detail": "无效的 moi_key"
 }
 ```
 
@@ -280,12 +301,14 @@ Content-Type: multipart/form-data
 **上传文件:**
 ```bash
 curl -X POST http://localhost:8008/v1/audio/transcriptions \
+  -H "moi_key: YOUR_KEY" \
   -F "file=@/path/to/audio.wav"
 ```
 
 **公网 URL:**
 ```bash
 curl -X POST http://localhost:8008/v1/audio/transcriptions \
+  -H "moi_key: YOUR_KEY" \
   -F "url=https://example.com/audio.wav"
 ```
 
@@ -298,6 +321,7 @@ import requests
 resp = requests.post(
     "http://你的服务器/v1/audio/transcriptions",
     files={"file": ("audio.mp3", file_bytes)},
+    headers={"moi_key": "YOUR_KEY"},
     timeout=65,
 )
 print(resp.json())  # {"status_code":200, "result":"success", "text":"..."}
@@ -310,6 +334,7 @@ import requests
 resp = requests.post(
     "http://你的服务器/v1/audio/transcriptions",
     data={"url": "https://对方系统.com/audio.mp3"},
+    headers={"moi_key": "YOUR_KEY"},
     timeout=65,
 )
 print(resp.json()["text"])

@@ -14,6 +14,7 @@ import requests
 
 BASE_URL = "http://localhost:8008"
 TEST_DIR = Path("/tmp/asr_test_files")
+HEADERS = {"moi_key": "PhGBOXtN5mrGoOlsGB8Gpt4mCssA276m-IIjn54d1S-Be44vChewIp_d_8t3dQ48mYsV0AEnpj0H74fr"}
 
 # ====== 生成测试文件 ======
 def _prepare_test_files():
@@ -157,16 +158,17 @@ def run_tests():
             params = tc["params"]
 
             if method == "GET":
-                resp = requests.get(f"{BASE_URL}{tc['path']}", timeout=5)
+                resp = requests.get(f"{BASE_URL}{tc['path']}", headers=HEADERS, timeout=5)
 
             elif method == "POST":
-                resp = requests.post(f"{BASE_URL}{tc['path']}", timeout=5)
+                resp = requests.post(f"{BASE_URL}{tc['path']}", headers=HEADERS, timeout=5)
 
             elif method == "POST_FILE":
                 file_path = TEST_DIR / params["file"]
                 resp = requests.post(
                     f"{BASE_URL}{tc['path']}",
                     files={"file": (params["file"], file_path.read_bytes())},
+                    headers=HEADERS,
                     timeout=65,
                 )
 
@@ -174,6 +176,7 @@ def run_tests():
                 resp = requests.post(
                     f"{BASE_URL}{tc['path']}",
                     files={"file": (params["filename"], params["data"])},
+                    headers=HEADERS,
                     timeout=65,
                 )
 
@@ -182,6 +185,7 @@ def run_tests():
                 resp = requests.post(
                     f"{BASE_URL}{tc['path']}",
                     data={"url": url},
+                    headers=HEADERS,
                     timeout=65,
                 )
 
@@ -196,6 +200,7 @@ def run_tests():
                         r = requests.post(
                             f"{BASE_URL}{tc['path']}",
                             files={"file": ("test.wav", file_data)},
+                            headers=HEADERS,
                             timeout=65,
                         )
                         if r.status_code == 200:
